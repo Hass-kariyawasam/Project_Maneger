@@ -1,308 +1,177 @@
+// src/components/AuthScreens.jsx - v3
+import TFLogo from "./Logo.jsx";
 import { GInput, Btn } from "./UI.jsx";
-import { TEAM_MEMBERS } from "../constants.js";
 
-// ─── SHARED STYLE BLOCK ───────────────────────────────────────
-const AuthStyles = ({ sysColor, sysColorRGB }) => (
-  <style>{`
-    @keyframes text-glow-sweep {
-      0%   { text-shadow: 0 0 5px var(--sys-color), 0 0 10px var(--sys-color); }
-      50%  { text-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff, 0 0 40px var(--sys-color); }
-      100% { text-shadow: 0 0 5px var(--sys-color), 0 0 10px var(--sys-color); }
-    }
-    .glow-text-smooth { animation: text-glow-sweep 3s ease-in-out infinite; }
-    .themed-input {
-      border: 1px solid rgba(${sysColorRGB},0.27);
-      color: #ffffff !important;
-    }
-    .themed-input::placeholder { color: rgba(255,255,255,0.3); }
-    .themed-input:focus {
-      border-color: var(--sys-color) !important;
-      box-shadow: 0 0 12px rgba(${sysColorRGB},0.27) !important;
-    }
-    .neon-btn {
-      background: rgba(${sysColorRGB},0.13) !important;
-      border: 1px solid var(--sys-color) !important;
-      color: var(--sys-color) !important;
-      box-shadow: 0 0 10px rgba(${sysColorRGB},0.2) !important;
-    }
-    .neon-btn:hover {
-      background: rgba(${sysColorRGB},0.25) !important;
-      box-shadow: 0 0 22px var(--sys-color) !important;
-    }
-    select.themed-input option { background: #0a0f0a; color: #ffffff; }
-  `}</style>
-);
+const authWrap = {
+  background:"#030503", minHeight:"100vh",
+  display:"flex", flexDirection:"column",
+  alignItems:"center", justifyContent:"flex-start",
+  fontFamily:"'Share Tech Mono',monospace",
+  padding:"30px 16px 80px",
+  "--sc":"#00ff88", "--scr":"0,255,136",
+  backgroundImage:"linear-gradient(rgba(0,255,136,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,0.03) 1px,transparent 1px)",
+  backgroundSize:"60px 60px",
+};
+const card = {
+  width:"100%", maxWidth:480, background:"#0a0f0a",
+  border:"1px solid rgba(0,255,136,0.22)", borderRadius:16,
+  padding:24, boxShadow:"0 10px 40px rgba(0,255,136,0.07)",
+};
 
-// ─── GOOGLE ONBOARD ───────────────────────────────────────────
-export function GoogleOnboardScreen({
-  sysColor, sysColorRGB,
-  regPhoto, regUser, setRegUser,
-  regPhone, setRegPhone,
-  regEmail, setRegEmail,
-  regTgNumber, setRegTgNumber,
-  regRole, setRegRole,
-  regTeamName, setRegTeamName,
-  regToken, setRegToken,
-  formErr, formLoading,
-  doRegister, cancelGoogleOnboard,
-}) {
+function FL({ children, color="rgba(0,255,136,0.55)" }) {
+  return <div style={{ fontSize:9, color, marginBottom:5, letterSpacing:1.5, fontFamily:"'Share Tech Mono',monospace" }}>{children}</div>;
+}
+function Err({ msg }) {
+  return <div style={{ color:"#ff4444", fontSize:12, padding:"9px 13px", background:"#ff000020", border:"1px solid #ff444444", borderRadius:8 }}>{msg}</div>;
+}
+function Footer() {
+  return <div style={{ marginTop:22, fontSize:9, color:"rgba(0,255,136,0.15)", letterSpacing:2, textAlign:"center" }}>All rights reserved TeamFlow | by HassKariyawasam</div>;
+}
+
+// Shared project+team+code join block
+function JoinBlock({ projects, selectedProjId, setSelectedProjId, regTeam, setRegTeam, joinCode, setJoinCode }) {
+  const proj = projects.find(p => p.id === selectedProjId);
   return (
-    <div style={{
-      background: "#030503", minHeight: "100vh",
-      display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center",
-      fontFamily: "'Share Tech Mono',monospace", padding: 20,
-      "--sys-color": sysColor, "--sys-color-rgb": sysColorRGB,
-    }}>
-      <AuthStyles sysColor={sysColor} sysColorRGB={sysColorRGB} />
-      <div style={{
-        width: "100%", maxWidth: 450,
-        background: "#0a0f0a",
-        border: `1px solid rgba(${sysColorRGB},0.2)`,
-        borderRadius: 16, padding: 30,
-        boxShadow: `0 10px 30px rgba(${sysColorRGB},0.1)`,
-      }}>
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
-          {regPhoto
-            ? <img src={regPhoto} alt="profile" style={{ width: 60, height: 60, borderRadius: 30, border: `2px solid ${sysColor}`, marginBottom: 10 }} />
-            : <div style={{ fontSize: 40 }}>👤</div>}
-          <div style={{ fontSize: 18, color: sysColor, letterSpacing: 1 }}>COMPLETE YOUR PROFILE</div>
-          <div style={{ fontSize: 12, color: `rgba(${sysColorRGB},0.4)`, marginTop: 4 }}>
-            We need a few more details to set up your workspace.
-          </div>
-        </div>
+    <div style={{ background:"#0d0d00", border:"1px solid #ffaa0033", borderRadius:10, padding:14, display:"flex", flexDirection:"column", gap:10 }}>
+      <div style={{ fontSize:10, color:"#ffaa00", letterSpacing:2, fontWeight:"bold" }}>PROJECT + TEAM</div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ display: "flex", gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>USERNAME</div>
-              <GInput value={regUser} onChange={e => setRegUser(e.target.value)} placeholder="Your name..." />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>PHONE NUMBER *</div>
-              <GInput value={regPhone} onChange={e => setRegPhone(e.target.value)} placeholder="07X..." />
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>EMAIL</div>
-              <GInput type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} placeholder="Email..." disabled={true} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>TELEGRAM NO. *</div>
-              <GInput value={regTgNumber} onChange={e => setRegTgNumber(e.target.value)} placeholder="TG/..." />
-            </div>
-          </div>
+      <div>
+        <FL color="#ffaa0099">SELECT PROJECT *</FL>
+        <select
+          value={selectedProjId||""}
+          onChange={e=>setSelectedProjId(e.target.value)}
+          style={{ width:"100%", background:"#0a0f0a", border:"1px solid #ffaa0044", borderRadius:8, padding:"12px 14px", color:"#fff", fontFamily:"'Share Tech Mono',monospace", fontSize:13, outline:"none" }}
+        >
+          <option value="">-- Choose a project --</option>
+          {projects.map(p=>(
+            <option key={p.id} value={p.id}>{p.shortName} - {p.longName}</option>
+          ))}
+        </select>
+        {projects.length===0 && <div style={{ fontSize:9, color:"#ff4444", marginTop:4 }}>No projects yet. Contact admin to create one.</div>}
+        {proj && <div style={{ fontSize:9, color:"#ffaa0066", marginTop:4 }}>Joining: {proj.longName}</div>}
+      </div>
 
-          <div>
-            <div style={{ fontSize: 12, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 8, letterSpacing: 2 }}>TEAM ROLE</div>
-            <select value={regRole} onChange={e => setRegRole(e.target.value)}
-              className="themed-input"
-              style={{ width: "100%", background: "#0a0f0a", borderRadius: 8, padding: "14px 16px", fontSize: 15, fontFamily: "'Share Tech Mono',monospace", outline: "none" }}>
-              {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
+      <div>
+        <FL color="#ffaa0099">YOUR TEAM NAME *</FL>
+        <GInput value={regTeam} onChange={e=>setRegTeam(e.target.value)} placeholder="e.g. Team Alpha..."/>
+      </div>
 
-          {regRole === "Group Leader" ? (
-            <div style={{ background: `rgba(${sysColorRGB},0.05)`, padding: 16, borderRadius: 8, border: `1px solid rgba(${sysColorRGB},0.2)` }}>
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 11, color: "#ffffff", marginBottom: 6, letterSpacing: 1 }}>TEAM NAME</div>
-                <GInput value={regTeamName} onChange={e => setRegTeamName(e.target.value)} placeholder="Team name..." />
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: "#ffaa00", marginBottom: 6, letterSpacing: 1 }}>CREATE SECRET TOKEN</div>
-                <GInput type="password" value={regToken} onChange={e => setRegToken(e.target.value)} placeholder="e.g. 1234" />
-              </div>
-            </div>
-          ) : (
-            <div style={{ background: "#ffaa0011", padding: 16, borderRadius: 8, border: "1px solid #ffaa0044" }}>
-              <div style={{ fontSize: 11, color: "#ffaa00", marginBottom: 6, letterSpacing: 1 }}>ENTER SECRET TOKEN FROM YOUR LEADER</div>
-              <GInput type="password" value={regToken} onChange={e => setRegToken(e.target.value)} placeholder="Secret token..." />
-            </div>
-          )}
-
-          {formErr && (
-            <div style={{ color: "#ff4444", fontSize: 14, padding: "10px", background: "#ff000022", border: "1px solid #ff444455", borderRadius: 8 }}>
-              {formErr}
-            </div>
-          )}
-
-          <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-            <Btn onClick={() => doRegister(true)} style={{ flex: 2 }}>
-              {formLoading ? "SAVING..." : "COMPLETE SETUP"}
-            </Btn>
-            <button onClick={cancelGoogleOnboard} style={{ flex: 1, background: "transparent", border: "1px solid #ff444444", color: "#ff4444", borderRadius: 8, fontFamily: "'Share Tech Mono',monospace", cursor: "pointer" }}>
-              CANCEL
-            </button>
-          </div>
-        </div>
+      <div>
+        <FL color="#ffaa0099">JOIN CODE * (from your leader)</FL>
+        <GInput value={joinCode} onChange={e=>setJoinCode(e.target.value.toUpperCase())} placeholder="e.g. ABC123 or NEWLEADER"/>
+        {joinCode && joinCode!=="NEWLEADER" && <div style={{ fontSize:9, color:"#00ff8877", marginTop:4 }}>Code filled from invite link!</div>}
+        {joinCode==="NEWLEADER" && <div style={{ fontSize:9, color:"#00ff88", marginTop:4, fontWeight:"bold" }}>Leader mode: You will create a new team!</div>}
+        <div style={{ fontSize:9, color:"#ffaa0055", marginTop:4 }}>Use NEWLEADER to register as team leader</div>
       </div>
     </div>
   );
 }
 
-// ─── LOGIN / REGISTER ─────────────────────────────────────────
+// Google onboard
+export function GoogleOnboardScreen({
+  regUser, setRegUser, regPhone, setRegPhone,
+  regEmail, regTg, setRegTg, regPhoto,
+  joinCode, setJoinCode,
+  regTeam, setRegTeam,
+  projects, selectedProjId, setSelectedProjId,
+  formErr, formLoad, doRegister, doCancel,
+}) {
+  return (
+    <div style={authWrap}>
+      <div style={{ marginBottom:24, marginTop:10 }}><TFLogo size="md" color="#00ff88"/></div>
+      <div style={card}>
+        <div style={{ textAlign:"center", marginBottom:18 }}>
+          {regPhoto
+            ? <img src={regPhoto} alt="p" style={{ width:58, height:58, borderRadius:29, border:"2px solid #00ff88", marginBottom:8 }}/>
+            : <div style={{ width:48, height:48, borderRadius:24, background:"#00ff8822", border:"2px solid #00ff88", display:"flex", alignItems:"center", justifyContent:"center", color:"#00ff88", fontSize:18, margin:"0 auto 8px" }}>?</div>}
+          <div style={{ fontSize:15, color:"#00ff88", letterSpacing:1 }}>COMPLETE SETUP</div>
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+          <div style={{ display:"flex", gap:10 }}>
+            <div style={{ flex:1 }}><FL>USERNAME</FL><GInput value={regUser} onChange={e=>setRegUser(e.target.value)} placeholder="Name..."/></div>
+            <div style={{ flex:1 }}><FL>PHONE *</FL><GInput value={regPhone} onChange={e=>setRegPhone(e.target.value)} placeholder="07X..."/></div>
+          </div>
+          <div style={{ display:"flex", gap:10 }}>
+            <div style={{ flex:1 }}><FL>EMAIL</FL><GInput type="email" value={regEmail} disabled/></div>
+            <div style={{ flex:1 }}><FL>TELEGRAM *</FL><GInput value={regTg} onChange={e=>setRegTg(e.target.value)} placeholder="TG/..."/></div>
+          </div>
+          <JoinBlock projects={projects} selectedProjId={selectedProjId} setSelectedProjId={setSelectedProjId}
+            regTeam={regTeam} setRegTeam={setRegTeam} joinCode={joinCode} setJoinCode={setJoinCode}/>
+          {formErr && <Err msg={formErr}/>}
+          <div style={{ display:"flex", gap:10 }}>
+            <Btn onClick={()=>doRegister(true)} style={{ flex:2 }}>{formLoad?"SAVING...":"COMPLETE"}</Btn>
+            <button onClick={doCancel} style={{ flex:1, background:"transparent", border:"1px solid #ff444433", color:"#ff4444", borderRadius:8, fontFamily:"'Share Tech Mono',monospace", cursor:"pointer" }}>CANCEL</button>
+          </div>
+        </div>
+      </div>
+      <Footer/>
+    </div>
+  );
+}
+
+// Main Login / Register
 export function AuthScreen({
-  sysColor, sysColorRGB, screen, setScreen,
-  loginIdentifier, setLoginIdentifier, loginPass, setLoginPass,
+  authTab, setAuthTab,
+  loginId, setLoginId, loginPass, setLoginPass,
   regUser, setRegUser, regPass, setRegPass,
-  regEmail, setRegEmail, regTgNumber, setRegTgNumber,
-  regPhone, setRegPhone, regRole, setRegRole,
-  regTeamName, setRegTeamName, regToken, setRegToken,
-  formErr, setFormErr, formLoading,
+  regEmail, setRegEmail, regTg, setRegTg, regPhone, setRegPhone,
+  regTeam, setRegTeam,
+  joinCode, setJoinCode,
+  projects, selectedProjId, setSelectedProjId,
+  formErr, formLoad,
   doLogin, doRegister, doGoogleLogin,
 }) {
   return (
-    <div style={{
-      background: "#030503", minHeight: "100vh",
-      display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center",
-      fontFamily: "'Share Tech Mono',monospace", padding: 20,
-      "--sys-color": sysColor, "--sys-color-rgb": sysColorRGB,
-    }}>
-      <AuthStyles sysColor={sysColor} sysColorRGB={sysColorRGB} />
-
-      <div style={{ width: "100%", maxWidth: 450 }}>
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            width: 70, height: 70,
-            border: `3px solid ${sysColor}`, borderRadius: 16, marginBottom: 16,
-            background: "#0a0f0a", fontSize: 35, color: sysColor,
-            boxShadow: `0 0 20px rgba(${sysColorRGB},0.4)`,
-          }}>⬡</div>
-          <div style={{ fontFamily: "'Orbitron',monospace", fontSize: 26, color: "#ffffff", letterSpacing: 3, textShadow: "0 0 10px #ffffff66" }}>
-            TEAM WORKSPACE
-          </div>
-          <div style={{ fontSize: 12, color: sysColor, marginTop: 12, letterSpacing: 2 }} className="glow-text-smooth">
-            MADE BY HASS KARIYAWASAM
-          </div>
-          <div style={{ fontSize: 10, color: `rgba(${sysColorRGB},0.4)`, marginTop: 4, letterSpacing: 1 }}>
-            DBMS PRACTICUM 2026 // UNIVERSITY OF RUHUNA
-          </div>
-        </div>
-
-        <div style={{
-          background: "#0a0f0a",
-          border: `1px solid rgba(${sysColorRGB},0.2)`,
-          borderRadius: 16, padding: 30,
-          boxShadow: `0 10px 30px rgba(${sysColorRGB},0.1)`,
-        }}>
-          {/* Tab switcher */}
-          <div style={{ display: "flex", background: "#000", borderRadius: 10, padding: 6, marginBottom: 20, border: `1px solid rgba(${sysColorRGB},0.13)` }}>
-            {["login", "register"].map(s => (
-              <button key={s} onClick={() => { setScreen(s); setFormErr(""); }}
-                style={{
-                  flex: 1, padding: "12px 0",
-                  background: screen === s ? `rgba(${sysColorRGB},0.13)` : "transparent",
-                  border: "none",
-                  color: screen === s ? sysColor : `rgba(${sysColorRGB},0.4)`,
-                  fontSize: 14, fontWeight: "bold", letterSpacing: 2,
-                  borderRadius: 6, fontFamily: "'Share Tech Mono',monospace",
-                  cursor: "pointer", transition: "all 0.3s",
-                }}>
-                {s === "login" ? "[ LOGIN ]" : "[ REGISTER ]"}
+    <div style={authWrap}>
+      <div style={{ marginBottom:20, marginTop:10 }}><TFLogo size="md" color="#00ff88"/></div>
+      <div style={{ width:"100%", maxWidth:480 }}>
+        <div style={card}>
+          {/* Tabs */}
+          <div style={{ display:"flex", background:"#000", borderRadius:10, padding:4, marginBottom:18, border:"1px solid rgba(0,255,136,0.12)" }}>
+            {["login","register"].map(s=>(
+              <button key={s} onClick={()=>setAuthTab(s)}
+                style={{ flex:1, padding:"10px 0", background:authTab===s?"rgba(0,255,136,0.12)":"transparent", border:"none", color:authTab===s?"#00ff88":"rgba(0,255,136,0.38)", fontSize:12, fontWeight:"bold", letterSpacing:2, borderRadius:6, fontFamily:"'Share Tech Mono',monospace", cursor:"pointer" }}>
+                {s==="login"?"[ LOGIN ]":"[ REGISTER ]"}
               </button>
             ))}
           </div>
 
-          {/* Google button */}
-          <div style={{ marginBottom: 20 }}>
-            <button onClick={doGoogleLogin} style={{
-              width: "100%", padding: "14px",
-              background: "#ffffff", color: "#000", border: "none",
-              borderRadius: 8, fontSize: 15, fontWeight: "bold",
-              fontFamily: "sans-serif",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              gap: 10, cursor: "pointer",
-            }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style={{ width: 18 }} />
-              Continue with Google
-            </button>
-            <div style={{ textAlign: "center", margin: "16px 0", color: `rgba(${sysColorRGB},0.33)`, fontSize: 12, letterSpacing: 1 }}>
-              OR WITH EMAIL
+          {/* Google */}
+          <button onClick={doGoogleLogin}
+            style={{ width:"100%", padding:12, background:"#fff", color:"#000", border:"none", borderRadius:8, fontSize:13, fontWeight:"bold", display:"flex", alignItems:"center", justifyContent:"center", gap:10, cursor:"pointer", marginBottom:14 }}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style={{ width:18 }}/>
+            Continue with Google
+          </button>
+          <div style={{ textAlign:"center", marginBottom:14, color:"rgba(0,255,136,0.22)", fontSize:10, letterSpacing:1 }}>-- OR WITH EMAIL --</div>
+
+          {authTab==="login" ? (
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div><FL>USERNAME OR EMAIL</FL><GInput value={loginId} onChange={e=>setLoginId(e.target.value)} placeholder="username or email..."/></div>
+              <div><FL>PASSWORD</FL><GInput type="password" value={loginPass} onChange={e=>setLoginPass(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")doLogin();}} placeholder="password..."/></div>
+              {formErr && <Err msg={formErr}/>}
+              <Btn onClick={doLogin}>{formLoad?"CONNECTING...":"ENTER SYSTEM"}</Btn>
+              <div style={{ textAlign:"center", fontSize:9, color:"rgba(0,255,136,0.18)", marginTop:4 }}>admin / admin1234</div>
             </div>
-          </div>
-
-          {/* Login Form */}
-          {screen === "login" ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div>
-                <div style={{ fontSize: 12, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 8, letterSpacing: 2 }}>USERNAME OR EMAIL</div>
-                <GInput value={loginIdentifier} onChange={e => setLoginIdentifier(e.target.value)} placeholder="Enter username or email..." />
+          ):(
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div style={{ display:"flex", gap:10 }}>
+                <div style={{ flex:1 }}><FL>USERNAME</FL><GInput value={regUser} onChange={e=>setRegUser(e.target.value)} placeholder="Name..."/></div>
+                <div style={{ flex:1 }}><FL>PASSWORD</FL><GInput type="password" value={regPass} onChange={e=>setRegPass(e.target.value)} placeholder="4+ chars..."/></div>
               </div>
-              <div>
-                <div style={{ fontSize: 12, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 8, letterSpacing: 2 }}>PASSWORD</div>
-                <GInput type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)} placeholder="Enter password..." />
+              <div><FL>PHONE *</FL><GInput value={regPhone} onChange={e=>setRegPhone(e.target.value)} placeholder="07X..."/></div>
+              <div style={{ display:"flex", gap:10 }}>
+                <div style={{ flex:1 }}><FL>EMAIL</FL><GInput type="email" value={regEmail} onChange={e=>setRegEmail(e.target.value)} placeholder="Email..."/></div>
+                <div style={{ flex:1 }}><FL>TELEGRAM *</FL><GInput value={regTg} onChange={e=>setRegTg(e.target.value)} placeholder="TG/..."/></div>
               </div>
-              {formErr && <div style={{ color: "#ff4444", fontSize: 14, padding: "10px 14px", background: "#ff000022", border: "1px solid #ff444455", borderRadius: 8 }}>{formErr}</div>}
-              <Btn onClick={doLogin} style={{ marginTop: 6 }}>
-                {formLoading ? "CONNECTING..." : "ENTER SYSTEM"}
-              </Btn>
-            </div>
-          ) : (
-            /* Register Form */
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ display: "flex", gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>USERNAME</div>
-                  <GInput value={regUser} onChange={e => setRegUser(e.target.value)} placeholder="Name..." />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>PASSWORD</div>
-                  <GInput type="password" value={regPass} onChange={e => setRegPass(e.target.value)} placeholder="4+ chars..." />
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>PHONE NUMBER *</div>
-                <GInput value={regPhone} onChange={e => setRegPhone(e.target.value)} placeholder="07X..." />
-              </div>
-              <div style={{ display: "flex", gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>EMAIL</div>
-                  <GInput type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} placeholder="Email..." />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 11, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 6, letterSpacing: 1 }}>TELEGRAM NO. *</div>
-                  <GInput value={regTgNumber} onChange={e => setRegTgNumber(e.target.value)} placeholder="TG/..." />
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 12, color: `rgba(${sysColorRGB},0.67)`, marginBottom: 8, letterSpacing: 2 }}>TEAM ROLE</div>
-                <select value={regRole} onChange={e => setRegRole(e.target.value)}
-                  className="themed-input"
-                  style={{ width: "100%", background: "#0a0f0a", borderRadius: 8, padding: "14px 16px", fontSize: 15, fontFamily: "'Share Tech Mono',monospace", outline: "none" }}>
-                  {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-
-              {regRole === "Group Leader" ? (
-                <div style={{ background: `rgba(${sysColorRGB},0.05)`, padding: 16, borderRadius: 8, border: `1px solid rgba(${sysColorRGB},0.2)` }}>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 11, color: "#ffffff", marginBottom: 6, letterSpacing: 1 }}>TEAM NAME</div>
-                    <GInput value={regTeamName} onChange={e => setRegTeamName(e.target.value)} placeholder="Team name..." />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 11, color: "#ffaa00", marginBottom: 6, letterSpacing: 1 }}>CREATE SECRET TOKEN</div>
-                    <GInput type="password" value={regToken} onChange={e => setRegToken(e.target.value)} placeholder="e.g. 1234" />
-                  </div>
-                </div>
-              ) : (
-                <div style={{ background: "#ffaa0011", padding: 16, borderRadius: 8, border: "1px solid #ffaa0044" }}>
-                  <div style={{ fontSize: 11, color: "#ffaa00", marginBottom: 6, letterSpacing: 1 }}>ENTER SECRET TOKEN FROM YOUR LEADER</div>
-                  <GInput type="password" value={regToken} onChange={e => setRegToken(e.target.value)} placeholder="Secret token..." />
-                </div>
-              )}
-
-              {formErr && <div style={{ color: "#ff4444", fontSize: 14, padding: "10px", background: "#ff000022", border: "1px solid #ff444455", borderRadius: 8 }}>{formErr}</div>}
-              <Btn onClick={() => doRegister(false)} style={{ marginTop: 6 }}>
-                {formLoading ? "CREATING..." : "CREATE WORKSPACE"}
-              </Btn>
+              <JoinBlock projects={projects} selectedProjId={selectedProjId} setSelectedProjId={setSelectedProjId}
+                regTeam={regTeam} setRegTeam={setRegTeam} joinCode={joinCode} setJoinCode={setJoinCode}/>
+              {formErr && <Err msg={formErr}/>}
+              <Btn onClick={()=>doRegister(false)}>{formLoad?"CREATING...":"CREATE ACCOUNT"}</Btn>
             </div>
           )}
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }

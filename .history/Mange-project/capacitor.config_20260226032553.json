@@ -1,0 +1,14 @@
+{
+  "appId": "com.TeamFlow",
+  "appName": "TeamFlow",
+  "webDir": "dist",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["google.com"]
+    }
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

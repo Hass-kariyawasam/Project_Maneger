@@ -1,109 +1,82 @@
-// ─── LOADING SCREEN ───────────────────────────────────────────
+// src/components/LoadingScreen.jsx
+import TFLogo from "./Logo.jsx";
+
 export default function LoadingScreen() {
   return (
-    <div
-      style={{
-        background: "#030503",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "'Share Tech Mono', monospace",
-      }}
-    >
-      <style>{`
-        :root { --sys-color: #00ff88; }
-        @keyframes glitch {
-          0%   { clip-path: inset(0 0 95% 0); transform: translate(-4px, 0); }
-          10%  { clip-path: inset(30% 0 50% 0); transform: translate(4px, 0); }
-          20%  { clip-path: inset(60% 0 10% 0); transform: translate(-2px, 0); }
-          30%  { clip-path: inset(80% 0 5%  0); transform: translate(2px, 0); }
-          40%  { clip-path: inset(10% 0 70% 0); transform: translate(-4px, 0); }
-          50%  { clip-path: inset(50% 0 30% 0); transform: translate(0, 0); }
-          100% { clip-path: inset(0 0 95% 0); transform: translate(0, 0); }
-        }
-        @keyframes scanline {
-          0%   { top: -10%; }
-          100% { top: 110%; }
-        }
-        @keyframes pulse-ring {
-          0%   { transform: scale(1);   opacity: 0.8; }
-          100% { transform: scale(1.6); opacity: 0; }
-        }
-        @keyframes fadeInUp {
-          from { opacity:0; transform: translateY(20px); }
-          to   { opacity:1; transform: translateY(0); }
-        }
-        .glitch-text { position: relative; display: inline-block; }
-        .glitch-text::before,
-        .glitch-text::after {
-          content: attr(data-text);
-          position: absolute; left: 0; top: 0; width: 100%;
-          color: inherit; font: inherit;
-        }
-        .glitch-text::before {
-          color: #ff00cc;
-          animation: glitch 2s infinite steps(1);
-        }
-        .glitch-text::after {
-          color: #00ccff;
-          animation: glitch 2s infinite steps(1) reverse;
-        }
-      `}</style>
+    <div style={{
+      background:"#000", minHeight:"100vh",
+      display:"flex", alignItems:"center", justifyContent:"center",
+      fontFamily:"'Share Tech Mono',monospace",
+      position:"relative", overflow:"hidden",
+      "--sc":"#00ff88", "--scr":"0,255,136",
+    }}>
+      {/* Grid bg */}
+      <div style={{
+        position:"absolute", inset:0,
+        backgroundImage:"linear-gradient(rgba(0,255,136,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,0.04) 1px,transparent 1px)",
+        backgroundSize:"40px 40px", pointerEvents:"none",
+      }}/>
+      {/* Scan line */}
+      <div style={{
+        position:"absolute", left:0, right:0, height:2,
+        background:"linear-gradient(90deg,transparent,#00ff88,transparent)",
+        animation:"scan-line 2.5s linear infinite", pointerEvents:"none",
+      }}/>
 
-      <div style={{ textAlign: "center" }}>
-        {/* Pulsing ring + icon */}
-        <div style={{ position: "relative", display: "inline-block", marginBottom: 32 }}>
+      <div style={{ textAlign:"center", position:"relative", zIndex:10 }}>
+        {/* Multi-ring spinner */}
+        <div style={{ position:"relative", width:150, height:150, margin:"0 auto 40px" }}>
+          {/* Outer ring CW */}
+          <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"2px solid transparent", borderTop:"2px solid #00ff88", borderRight:"2px solid #00ff8844", animation:"spin-ring 2.5s linear infinite" }}/>
+          {/* Mid ring CCW */}
+          <div style={{ position:"absolute", inset:18, borderRadius:"50%", border:"2px solid transparent", borderTop:"2px solid #00ccff", borderLeft:"2px solid #00ccff44", animation:"spin-ring2 1.8s linear infinite" }}/>
+          {/* Slow inner ring */}
+          <div style={{ position:"absolute", inset:36, borderRadius:"50%", border:"1px solid #00ff8822", animation:"spin-ring 6s linear infinite" }}/>
+          {/* Core */}
           <div style={{
-            position: "absolute", inset: -10, borderRadius: "50%",
-            border: "2px solid #00ff88",
-            animation: "pulse-ring 1.4s ease-out infinite",
-          }} />
-          <div style={{
-            width: 90, height: 90, borderRadius: "50%",
-            background: "radial-gradient(circle, #0a2a1a, #030503)",
-            border: "2px solid #00ff88",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 42, color: "#00ff88",
-            boxShadow: "0 0 30px #00ff8866, inset 0 0 20px #00ff8822",
-          }}>⬡</div>
+            position:"absolute", inset:48, borderRadius:"50%",
+            background:"radial-gradient(circle,#0d2d1a,#030503)",
+            border:"2px solid #00ff88",
+            display:"flex", alignItems:"center", justifyContent:"center",
+            animation:"core-pulse 2s ease-in-out infinite",
+          }}>
+            {/* Mini logo lines in core */}
+            <div style={{ position:"relative", width:38, height:38 }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:4, paddingTop:5 }}>
+                <div className="line-anim-1" style={{ height:2, width:22, background:"#00ff88", borderRadius:2 }}/>
+                <div className="line-anim-2" style={{ height:2, width:15, marginLeft:4, background:"#00ff88", borderRadius:2 }}/>
+                <div className="line-anim-3" style={{ height:2, width:9, marginLeft:8, background:"#00ff88", borderRadius:2 }}/>
+              </div>
+              <svg style={{ position:"absolute", right:0, top:"50%", transform:"translateY(-50%)", width:10, height:22 }} viewBox="0 0 10 22" fill="none">
+                <polyline points="1,1 9,11 1,21" stroke="#00ff88" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
         </div>
 
-        {/* Glitch title */}
-        <div
-          className="glitch-text"
-          data-text="SYSTEM LOADING"
-          style={{
-            fontSize: 28, letterSpacing: 6, color: "#ffffff",
-            fontFamily: "'Orbitron', monospace", fontWeight: "bold",
-            textShadow: "0 0 20px #ffffff44",
-            animation: "fadeInUp 0.6s ease both",
-          }}
-        >
-          SYSTEM LOADING
+        {/* Logo */}
+        <div style={{ marginBottom:8 }}>
+          <TFLogo size="lg" color="#00ff88" showSub={false}/>
+        </div>
+
+        {/* Glitch subtitle */}
+        <div className="glitch" data-text=" INITIALIZING..." style={{ fontSize:11, letterSpacing:4, color:"#00ff8877", margin:"14px 0 24px", animation:"matrix-fade 0.6s ease both" }}>
+          INITIALIZING...
         </div>
 
         {/* Progress bar */}
-        <div style={{
-          width: 260, height: 2, background: "#0a2a1a",
-          borderRadius: 4, margin: "24px auto 16px", overflow: "hidden",
-        }}>
-          <div style={{
-            height: "100%",
-            background: "linear-gradient(90deg, #00ff88, #00ccff)",
-            boxShadow: "0 0 10px #00ff88",
-            animation: "scanline 1.8s linear infinite",
-          }} />
+        <div style={{ width:300, height:2, background:"#0a1a0a", borderRadius:4, margin:"0 auto 14px", overflow:"hidden", border:"1px solid #00ff8820" }}>
+          <div style={{ height:"100%", background:"linear-gradient(90deg,#00ff88,#00ccff,#00ff88)", backgroundSize:"200% 100%", animation:"scan-line 1.2s linear infinite", boxShadow:"0 0 10px #00ff88" }}/>
         </div>
 
-        <div style={{
-          fontSize: 13, color: "#00ff88", letterSpacing: 3,
-          animation: "fadeInUp 0.8s ease 0.3s both",
-        }}>
-          MADE BY HASS KARIYAWASAM
+        {/* Status lines */}
+        <div style={{ fontSize:10, color:"#00ff8855", letterSpacing:2, lineHeight:2.2 }}>
+          <div style={{ animation:"matrix-fade 0.4s ease 0.2s both" }}>CONNECTING TO FIREBASE...</div>
+          <div style={{ animation:"matrix-fade 0.4s ease 0.6s both", color:"#00ccff55" }}>LOADING USER SESSION...</div>
+          <div style={{ animation:"matrix-fade 0.4s ease 1.0s both" }}>by HassKariyawasam</div>
         </div>
-        <div style={{ fontSize: 11, color: "#00ff8866", marginTop: 8, letterSpacing: 2 }}>
-          DBMS PRACTICUM 2026 // UNIVERSITY OF RUHUNA
+        <div style={{ fontSize:9, color:"#00ff8820", marginTop:16, letterSpacing:2 }}>
+          All rights reserved TeamFlow
         </div>
       </div>
     </div>

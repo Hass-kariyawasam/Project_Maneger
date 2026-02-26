@@ -1,4 +1,4 @@
-// src/firebase.js
+// src/firebase.js - TeamFlow Firebase Init
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -12,7 +12,6 @@ const firebaseConfig = {
   appId: "1:17475331699:web:c7f8153fd1d94025cb2c06"
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export default app;
+const firebaseApp = initializeApp(firebaseConfig);
+export const auth = getAuth(firebaseApp);
+export const db   = getFirestore(firebaseApp);
