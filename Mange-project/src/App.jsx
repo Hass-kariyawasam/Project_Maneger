@@ -605,16 +605,16 @@ export default function App() {
           {activeProject && (
             <>
               <div style={{ width:1, height:26, background:`rgba(${scr},0.2)`, flexShrink:0 }}/>
-              <div style={{ minWidth:0 }}>
-                <div style={{ fontSize:11, fontFamily:"'Orbitron',monospace", fontWeight:"bold", color:sc, letterSpacing:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:140 }}>{activeProject.shortName}</div>
-                <div style={{ fontSize:8, color:`rgba(${scr},0.38)`, marginTop:1, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:140 }}>{profile.teamName}</div>
+              <div style={{ minWidth:0, maxWidth:140 }}>
+                <div style={{ fontSize:11, fontFamily:"'Orbitron',monospace", fontWeight:"bold", color:sc, letterSpacing:2, wordBreak:"break-word", lineHeight:1.3 }}>{activeProject.shortName}</div>
+                <div style={{ fontSize:8, color:`rgba(${scr},0.38)`, marginTop:2, wordBreak:"break-word", lineHeight:1.4 }}>{profile.teamName}</div>
               </div>
             </>
           )}
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:9, flexShrink:0 }}>
           <div style={{ textAlign:"right" }}>
-            <div style={{ fontSize:11, color:profile.color||sc, fontWeight:"bold", maxWidth:100, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{profile.username}</div>
+            <div style={{ fontSize:11, color:profile.color||sc, fontWeight:"bold", maxWidth:90, wordBreak:"break-word", lineHeight:1.3 }}>{profile.username}</div>
             <div style={{ fontSize:8, color:`rgba(${scr},0.35)`, marginTop:1 }}>{pct}%</div>
           </div>
           <div onClick={()=>setActiveTab("settings")} style={{ cursor:"pointer", flexShrink:0 }}>

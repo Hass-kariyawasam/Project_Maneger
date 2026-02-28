@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeamFlow</title>
+    <meta name="description" content="TeamFlow - Team Project Management by HassKariyawasam" />
+    <meta name="theme-color" content="#00ff88" />
+
+    <!-- Favicon: inline SVG TeamFlow logo -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23030503'/><line x1='5' y1='10' x2='22' y2='10' stroke='%2300ff88' stroke-width='2.5' stroke-linecap='round'/><line x1='9' y1='16' x2='22' y2='16' stroke='%2300ff88' stroke-width='2.5' stroke-linecap='round' opacity='0.65'/><line x1='13' y1='22' x2='22' y2='22' stroke='%2300ff88' stroke-width='2.5' stroke-linecap='round' opacity='0.35'/><polyline points='25,10 30,16 25,22' stroke='%2300ff88' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
+
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23030503'/><line x1='28' y1='58' x2='124' y2='58' stroke='%2300ff88' stroke-width='14' stroke-linecap='round'/><line x1='50' y1='90' x2='124' y2='90' stroke='%2300ff88' stroke-width='14' stroke-linecap='round' opacity='0.65'/><line x1='72' y1='122' x2='124' y2='122' stroke='%2300ff88' stroke-width='14' stroke-linecap='round' opacity='0.35'/><polyline points='140,58 168,90 140,122' stroke='%2300ff88' stroke-width='12' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
+
+    <style>
+      * { box-sizing: border-box; }
+      html, body, #root {
+        margin: 0; padding: 0;
+        background: #030503;
+        min-height: 100vh;
+        font-family: 'Share Tech Mono', monospace;
+      }
+      /* Splash while React loads */
+      #splash {
+        position: fixed; inset: 0;
+        background: #030503;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s;
+      }
+      #splash.hide { opacity: 0; pointer-events: none; }
+      .splash-logo {
+        display: flex; align-items: center; gap: 16px;
+        animation: sf 1.5s ease-in-out infinite;
+      }
+      @keyframes sf { 0%,100%{opacity:0.7} 50%{opacity:1} }
+      .splash-lines { display: flex; flex-direction: column; gap: 6px; }
+      .sl { height: 3px; border-radius: 2px; background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+      .splash-word { font-family: 'Orbitron', monospace; }
+    </style>
+
+    <!-- Preload fonts used by app -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Splash screen (shown until React mounts) -->
+    
+
+    <div id="root"></div>
+
+    <script>
+      // Hide splash when React takes over
+      window.addEventListener('load', function() {
+        setTimeout(function(){
+          var s = document.getElementById('splash');
+          if (s) { s.classList.add('hide'); setTimeout(function(){ if(s)s.remove(); }, 600); }
+        }, 800);
+      });
+    </script>
+
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
